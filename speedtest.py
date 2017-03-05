@@ -1207,6 +1207,10 @@ def parse_args():
                         help='Suppress verbose output, only show basic '
                              'information in CSV format. Speeds listed in '
                              'bit/s and not affected by --bytes')
+    parser.add_argument('--perfdata', action='store_true', default=False,
+                        help='Suppress verbose output, only show basic '
+                             'information in perfdata format. Speeds listed in '
+                             'bit/s and not affected by --bytes')
     parser.add_argument('--csv-delimiter', default=',', type=PARSER_TYPE_STR,
                         help='Single character delimiter to use in CSV '
                              'output. Default ","')
@@ -1315,7 +1319,7 @@ def shell():
     # Pre-cache the user agent string
     build_user_agent()
 
-    if args.simple or args.csv or args.json:
+    if args.simple or args.csv or args.json or args.perfdata:
         quiet = True
     else:
         quiet = False
@@ -1402,6 +1406,18 @@ def shell():
     if args.simple:
         print_('Ping: %s ms\nDownload: %0.2f M%s/s\nUpload: %0.2f M%s/s' %
                (results.ping,
+                (results.download / 1000.0 / 1000.0) / args.units[1],
+                args.units[0],
+                (results.upload / 1000.0 / 1000.0) / args.units[1],
+                args.units[0]))
+    elif args.perfdata:
+        print_('Ping: %s ms Download: %0.2f M%s/s Upload: %0.2f M%s/s|ping=%sms download=%0.2fM%s/s upload=%0.2fM%s/s' %
+               (results.ping,
+                (results.download / 1000.0 / 1000.0) / args.units[1],
+                args.units[0],
+                (results.upload / 1000.0 / 1000.0) / args.units[1],
+                args.units[0],
+                results.ping,
                 (results.download / 1000.0 / 1000.0) / args.units[1],
                 args.units[0],
                 (results.upload / 1000.0 / 1000.0) / args.units[1],
